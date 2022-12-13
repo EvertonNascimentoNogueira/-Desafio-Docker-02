@@ -5,24 +5,30 @@ services:
     image: phpmyadmin/phpmyadmin
     restart: always
     ports:
-      - 8081:80
+     - 8081:80
     environment:
-      - MA_HOST:db
-      - PMA_PORT:3306
-      - PMA_ARBITRARY:1
+      MA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
     depends_on:
      - db
+    networks:
+     - php-mariadb_network
+
+
 
   db:
     image: mariadb:10.11.1-rc-jammy
     ports:
-      - 3306:3306
+     - 3306:3306
     restart: unless-stopped
     environment:
-       MARIADB_ROOT_PASSWORD: rootpassword
+      MARIADB_ROOT_PASSWORD: root
     volumes:
-      - ./mariadb-volume:/data/db
+     - ./mariadb-volume:/var/lib/mysql
+    networks:
+     - php-mariadb_network
     
 networks:
-  default:
-    name: php-mariadb_network
+  php-mariadb_network:
+    driver: bridge
